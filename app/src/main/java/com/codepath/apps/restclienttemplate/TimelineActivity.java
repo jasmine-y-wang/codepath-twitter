@@ -1,10 +1,15 @@
 package com.codepath.apps.restclienttemplate;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +24,7 @@ import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +39,33 @@ public class TimelineActivity extends AppCompatActivity {
     List<Tweet> tweets;
     TweetsAdapter adapter;
     Button btnLogout;
+
+    ActivityResultLauncher<Intent> composeActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    // if the user comes back to this activity with no error or cancellation
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Log.i(TAG, "result code was ok");
+                        Intent data = result.getData();
+                        // get data passed from the intent (tweet)
+                        Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
+                        Log.i(TAG, "received tweet: " + tweet);
+                        // update the RV with the tweet
+                        // modify data source of tweets
+                        tweets.add(0, tweet);
+                        // update the adapter
+                        adapter.notifyItemInserted(0);
+                        rvTweets.smoothScrollToPosition(0);
+                    }
+                }
+            });
+
+    public void startComposeActivity() {
+        Intent intent = new Intent(this, ComposeActivity.class);
+        composeActivityResultLauncher.launch(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +107,7 @@ public class TimelineActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.compose) {
             // navigate to the compose activity
-            Intent intent = new Intent(this, ComposeActivity.class);
-            startActivity(intent);
+            startComposeActivity();
             return true;
         }
         return super.onOptionsItemSelected(item);
