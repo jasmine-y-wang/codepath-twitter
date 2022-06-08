@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate;
 
 import android.content.Context;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +16,12 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
+import org.w3c.dom.Text;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
 
@@ -71,22 +77,27 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvBody;
         TextView tvScreenName;
         ImageView ivTweetImage;
+        TextView tvRelativeDate;
+        TextView tvName;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ivProfileImage = itemView.findViewById(R.id.ivProfileImage);
             tvBody = itemView.findViewById(R.id.tvBody);
+            tvName = itemView.findViewById(R.id.tvName);
             tvScreenName = itemView.findViewById(R.id.tvScreenName);
             ivTweetImage = itemView.findViewById(R.id.ivTweetImage);
+            tvRelativeDate = itemView.findViewById(R.id.tvRelativeDate);
         }
 
         public void bind(Tweet tweet) {
             tvBody.setText(tweet.body);
-            tvScreenName.setText(tweet.user.screenName);
+            tvScreenName.setText("@" + tweet.user.screenName);
+            tvName.setText(tweet.user.name);
             Glide.with(context).load(tweet.user.profileImageUrl)
                     .transform(new RoundedCorners(400))
                     .into(ivProfileImage);
-
+            // render tweet image
             if (!((tweet.imageUrl).equals(""))) {
                 Log.i("TweetsAdapter", "image: " + tweet.imageUrl);
                 Log.i("TweetsAdapter", "tweet body: " + tweet.body);
@@ -99,6 +110,29 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                 ivTweetImage.setVisibility(View.GONE);
             }
 
+            // set relative date
+            tvRelativeDate.setText(" \u2022 " + getRelativeTimeAgo(tweet.dateCreated));
         }
+
     }
+
+    // code from https://gist.github.com/nesquena/f786232f5ef72f6e10a7
+    public String getRelativeTimeAgo(String rawJsonDate) {
+        String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+        SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
+        sf.setLenient(true);
+
+        String relativeDate = "";
+        try {
+            long dateMillis = sf.parse(rawJsonDate).getTime();
+            relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis, System.currentTimeMillis(),
+                    DateUtils.SECOND_IN_MILLIS).toString();
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return relativeDate;
+    }
+
+
 }

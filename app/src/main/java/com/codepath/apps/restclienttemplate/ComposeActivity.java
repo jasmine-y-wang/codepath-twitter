@@ -79,8 +79,4 @@ public class ComposeActivity extends AppCompatActivity {
             }
         });
     }
-
-    public void onSubmit(View v) {
-
-    }
 }

@@ -17,6 +17,7 @@ public class Tweet {
     public String createdAt;
     public User user;
     public String imageUrl;
+    public String dateCreated;
 
     // empty constructor needed by parceler library
     public Tweet() {}
@@ -27,6 +28,9 @@ public class Tweet {
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
         JSONObject entities = jsonObject.getJSONObject("entities");
+        tweet.dateCreated = jsonObject.getString("created_at");
+
+        // get image url if one exists
         tweet.imageUrl = "";
         if (entities.has("media")) {
             JSONArray mediaArray = entities.getJSONArray("media");

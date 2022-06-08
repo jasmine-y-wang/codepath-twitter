@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
         android:text="TextView"
-        app:layout_constraintStart_toEndOf="@+id/ivProfileImage"
+        app:layout_constraintStart_toEndOf="@+id/tvName"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="jamsinwang" />
 
@@ -48,4 +48,22 @@
         app:layout_constraintTop_toBottomOf="@+id/tvBody"
         app:layout_constraintVertical_bias="1.0"
         tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/tvRelativeDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toEndOf="@+id/tvScreenName"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="8h" />
+
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        app:layout_constraintStart_toEndOf="@+id/ivProfileImage"
+        app:layout_constraintTop_toTopOf="@+id/tvScreenName"
+        tools:text="jasmine" />
 </androidx.constraintlayout.widget.ConstraintLayout>
