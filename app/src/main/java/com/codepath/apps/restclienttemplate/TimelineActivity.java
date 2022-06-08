@@ -49,7 +49,6 @@ public class TimelineActivity extends AppCompatActivity {
                 public void onActivityResult(ActivityResult result) {
                     // if the user comes back to this activity with no error or cancellation
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        Log.i(TAG, "result code was ok");
                         Intent data = result.getData();
                         // get data passed from the intent (tweet)
                         Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
