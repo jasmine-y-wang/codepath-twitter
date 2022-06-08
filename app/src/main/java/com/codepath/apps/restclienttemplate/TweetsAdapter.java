@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
 import java.util.List;
@@ -81,11 +83,20 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         public void bind(Tweet tweet) {
             tvBody.setText(tweet.body);
             tvScreenName.setText(tweet.user.screenName);
-            Glide.with(context).load(tweet.user.profileImageUrl).into(ivProfileImage);
-            if (!(tweet.imageUrl).equals("")) {
+            Glide.with(context).load(tweet.user.profileImageUrl)
+                    .transform(new RoundedCorners(400))
+                    .into(ivProfileImage);
+
+            if (!((tweet.imageUrl).equals(""))) {
+                Log.i("TweetsAdapter", "image: " + tweet.imageUrl);
+                Log.i("TweetsAdapter", "tweet body: " + tweet.body);
                 // render tweet image and set visible
-                Glide.with(context).load(tweet.imageUrl).into(ivTweetImage);
+                Glide.with(context).load(tweet.imageUrl)
+                        .transform(new RoundedCorners(100))
+                        .into(ivTweetImage);
                 ivTweetImage.setVisibility(View.VISIBLE);
+            } else {
+                ivTweetImage.setVisibility(View.GONE);
             }
 
         }
