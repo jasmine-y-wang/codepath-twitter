@@ -41,6 +41,7 @@ public class TimelineActivity extends AppCompatActivity {
     Button btnLogout;
     private SwipeRefreshLayout swipeContainer;
     private EndlessRecyclerViewScrollListener scrollListener;
+    private MenuItem miActionProgressItem;
 
     ActivityResultLauncher<Intent> composeActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -109,8 +110,8 @@ public class TimelineActivity extends AppCompatActivity {
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-//                fetchTimelineAsync(0);
                 tweets.clear();
+                showProgressBar();
                 populateHomeTimeline(null);
             }
         });
@@ -128,6 +129,7 @@ public class TimelineActivity extends AppCompatActivity {
                 // Add whatever code is needed to append new items to the bottom of the list
                 Tweet lastTweetDisplayed = tweets.get(tweets.size() - 1);
                 String maxId = lastTweetDisplayed.id;
+                showProgressBar();
                 populateHomeTimeline(maxId);
             }
         };
@@ -139,6 +141,7 @@ public class TimelineActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        miActionProgressItem = menu.findItem(R.id.miActionProgress);
         return true;
     }
 
@@ -165,6 +168,7 @@ public class TimelineActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     Log.e(TAG, "Json exception", e);
                 }
+                hideProgressBar();
             }
 
             @Override
@@ -184,5 +188,16 @@ public class TimelineActivity extends AppCompatActivity {
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // same as above
         startActivity(i);
         finish();
+    }
+
+    // progress bar functions
+    public void showProgressBar() {
+        // Show progress item
+        miActionProgressItem.setVisible(true);
+    }
+
+    public void hideProgressBar() {
+        // Hide progress item
+        miActionProgressItem.setVisible(false);
     }
 }
