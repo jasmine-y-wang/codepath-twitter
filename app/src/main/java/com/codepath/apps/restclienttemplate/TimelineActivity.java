@@ -73,6 +73,9 @@ public class TimelineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         // only ever call once at the top
         setContentView(R.layout.activity_timeline);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.drawable.ic_logo_white);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
         // lookup the swipe container view
         swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
         // setup refresh listener which triggers new data loading
