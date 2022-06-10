@@ -26,6 +26,29 @@ public class ComposeActivity extends AppCompatActivity {
     EditText etCompose;
     Button btnTweet;
     TwitterClient client;
+    JsonHttpResponseHandler handler = new JsonHttpResponseHandler() {
+        @Override
+        public void onSuccess(int statusCode, Headers headers, JSON json) {
+            Log.i(TAG, "onSuccess to publish tweet");
+            try {
+                Tweet tweet = Tweet.fromJson(json.jsonObject);
+                Log.i(TAG, "published tweet says: " + tweet.body);
+                Intent intent = new Intent();
+                intent.putExtra("tweet", Parcels.wrap(tweet));
+                // set result code & bundle data for response
+                setResult(RESULT_OK, intent);
+                // close activity, pass data to parent
+                finish();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+            Log.e(TAG, "on failure", throwable);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,31 +74,16 @@ public class ComposeActivity extends AppCompatActivity {
                     Toast.makeText(ComposeActivity.this, "Sorry, your tweet is too long :(", Toast.LENGTH_LONG).show();
                 }
                 // make API call to twitter to publish the tweet
-                Toast.makeText(ComposeActivity.this, tweetContent, Toast.LENGTH_LONG).show();
-                client.publishTweet(tweetContent, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Headers headers, JSON json) {
-                        Log.i(TAG, "onSuccess to publish tweet");
-                        try {
-                            Tweet tweet = Tweet.fromJson(json.jsonObject);
-                            Log.i(TAG, "published tweet says: " + tweet.body);
-                            Intent intent = new Intent();
-                            intent.putExtra("tweet", Parcels.wrap(tweet));
-                            // set result code & bundle data for response
-                            setResult(RESULT_OK, intent);
+                Toast.makeText(ComposeActivity.this, "Sent!", Toast.LENGTH_LONG).show();
 
-                            // close activity, pass data to parent
-                            finish();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
-                        Log.e(TAG, "onFailure to publish tweet", throwable);
-                    }
-                });
+                if (getIntent().hasExtra("tweet_to_reply_to")) {
+                    Tweet tweetToReplyTo = Parcels.unwrap(getIntent().getParcelableExtra("tweet_to_reply_to"));
+                    String tweetToReplyToId = tweetToReplyTo.id;
+                    String tweetToReplyToUserScreenName = tweetToReplyTo.user.screenName;
+                    client.replyToTweet(tweetToReplyToId, "@" + tweetToReplyToUserScreenName + " " + tweetContent, handler);
+                } else {
+                    client.publishTweet(tweetContent, handler);
+                }
             }
         });
     }

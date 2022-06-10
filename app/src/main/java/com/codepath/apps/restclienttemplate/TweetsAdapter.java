@@ -1,6 +1,8 @@
 package com.codepath.apps.restclienttemplate;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -19,6 +21,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
+import org.parceler.Parcels;
 import org.w3c.dom.Text;
 
 import java.text.ParseException;
@@ -86,6 +89,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvName;
         TextView tvFavCount;
         ImageButton ibFav;
+        ImageButton ibReply;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -97,6 +101,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvRelativeDate = itemView.findViewById(R.id.tvRelativeDate);
             ibFav = itemView.findViewById(R.id.ibFav);
             tvFavCount = itemView.findViewById(R.id.tvFavCount);
+            ibReply = itemView.findViewById(R.id.ibReply);
         }
 
         public void bind(Tweet tweet) {
@@ -132,6 +137,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             // set relative date
             tvRelativeDate.setText(" \u2022 " + getRelativeTimeAgo(tweet.dateCreated));
 
+            // like button listener
             ibFav.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -181,6 +187,20 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
                     }
                     tvFavCount.setText(String.valueOf(tweet.favCount));
+                }
+            });
+
+            // reply button listener
+            ibReply.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // pop up a compose screen
+                    // it's gonna be a brand new tweet, but it'll have an extra attribute
+                        // extra attribute: "in_reply_to_status_id"
+
+                    Intent i = new Intent(context, ComposeActivity.class);
+                    i.putExtra("tweet_to_reply_to", Parcels.wrap(tweet));
+                    ((Activity) context).startActivityForResult(i, TimelineActivity.REQUEST_CODE);
                 }
             });
         }

@@ -5,7 +5,9 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -34,6 +36,7 @@ import okhttp3.Headers;
 public class TimelineActivity extends AppCompatActivity {
 
     public static final String TAG = "TimelineActivity";
+    public static final int REQUEST_CODE = 22;
     TwitterClient client;
     RecyclerView rvTweets;
     List<Tweet> tweets;
@@ -43,7 +46,7 @@ public class TimelineActivity extends AppCompatActivity {
     private EndlessRecyclerViewScrollListener scrollListener;
     private MenuItem miActionProgressItem;
 
-    ActivityResultLauncher<Intent> composeActivityResultLauncher = registerForActivityResult(
+    public ActivityResultLauncher<Intent> composeActivityResultLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
@@ -67,6 +70,28 @@ public class TimelineActivity extends AppCompatActivity {
     public void startComposeActivity() {
         Intent intent = new Intent(this, ComposeActivity.class);
         composeActivityResultLauncher.launch(intent);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+            // get data passed from the intent (tweet)
+            Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
+            Log.i(TAG, "received tweet: " + tweet);
+            // update the RV with the tweet
+            // modify data source of tweets
+            tweets.add(0, tweet);
+            // update the adapter
+            adapter.notifyItemInserted(0);
+            rvTweets.smoothScrollToPosition(0);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void startComposeFragment() {
+        FragmentManager fm = getSupportFragmentManager();
+        ComposeFragment composeFragment = ComposeFragment.newInstance("hi", "idk");
+        composeFragment.show(fm, "fragment_compose");
     }
 
     @Override
@@ -150,6 +175,7 @@ public class TimelineActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.compose) {
             // navigate to the compose activity
             startComposeActivity();
+//            startComposeFragment();
             return true;
         }
         return super.onOptionsItemSelected(item);
