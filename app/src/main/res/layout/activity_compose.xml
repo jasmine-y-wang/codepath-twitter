@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="15dp"
     app:counterEnabled="true"
     app:counterMaxLength="10"
     tools:context=".ComposeActivity">
@@ -42,7 +43,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
+        android:background="@color/twitter_blue_fill_pressed"
         android:text="@string/tweet"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout" />
 </androidx.constraintlayout.widget.ConstraintLayout>
