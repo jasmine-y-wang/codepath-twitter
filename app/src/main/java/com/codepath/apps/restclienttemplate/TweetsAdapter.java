@@ -203,6 +203,15 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
                     ((Activity) context).startActivityForResult(i, TimelineActivity.REQUEST_CODE);
                 }
             });
+
+            ivProfileImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(context, ProfileActivity.class);
+                    i.putExtra("user", Parcels.wrap(tweet.user));
+                    context.startActivity(i);
+                }
+            });
         }
 
     }
