@@ -47,7 +47,7 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-![App Demo Link](twitter-demo.gif)
+![App Demo Link](demo.gif)
 
 ## Notes
 
