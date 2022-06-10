@@ -19,11 +19,19 @@ public class Tweet {
     public String imageUrl;
     public String dateCreated;
     public String id;
+    public boolean isFavorited;
+    public boolean isRetweeted;
+    public int favCount;
+    public int retweetedCount;
 
     // empty constructor needed by parceler library
     public Tweet() {}
 
     public static Tweet fromJson(JSONObject jsonObject) throws JSONException {
+        if (jsonObject.has("retweeted_status")) {
+            return null;
+        }
+
         Tweet tweet = new Tweet();
         tweet.body = jsonObject.getString("text");
         tweet.createdAt = jsonObject.getString("created_at");
@@ -31,6 +39,10 @@ public class Tweet {
         JSONObject entities = jsonObject.getJSONObject("entities");
         tweet.dateCreated = jsonObject.getString("created_at");
         tweet.id = jsonObject.getString("id_str");
+        tweet.isFavorited = jsonObject.getBoolean("favorited");
+        tweet.isRetweeted = jsonObject.getBoolean("retweeted");
+        tweet.favCount = jsonObject.getInt("favorite_count");
+        tweet.retweetedCount = jsonObject.getInt("retweet_count");
 
         // get image url if one exists
         tweet.imageUrl = "";
@@ -51,7 +63,10 @@ public class Tweet {
     public static List<Tweet> fromJsonArray(JSONArray jsonArray) throws JSONException {
         List<Tweet> tweets = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
-            tweets.add(fromJson(jsonArray.getJSONObject(i)));
+            Tweet tweet = fromJson(jsonArray.getJSONObject(i));
+            if (tweet != null) { // skip retweets
+                tweets.add(tweet);
+            }
         }
         return tweets;
     }

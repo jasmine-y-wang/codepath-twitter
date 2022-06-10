@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.w3c.dom.Text;
 
@@ -23,6 +25,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
+
+import okhttp3.Headers;
 
 public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder> {
 
@@ -99,6 +103,16 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvBody.setText(tweet.body);
             tvScreenName.setText("@" + tweet.user.screenName);
             tvName.setText(tweet.user.name);
+
+            // set favorite count and icon
+            tvFavCount.setText(String.valueOf(tweet.favCount));
+            if (tweet.isFavorited) {
+                Drawable filled_heart = context.getDrawable(R.drawable.ic_vector_heart);
+                ibFav.setImageDrawable(filled_heart);
+            } else {
+                Drawable empty_heart = context.getDrawable(R.drawable.ic_vector_heart_stroke);
+                ibFav.setImageDrawable(empty_heart);
+            }
             Glide.with(context).load(tweet.user.profileImageUrl)
                     .transform(new RoundedCorners(400))
                     .into(ivProfileImage);
@@ -121,19 +135,52 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             ibFav.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // if not already favorited
+                    if (!tweet.isFavorited) {
                         // tell Twitter I want to favorite this
+                        TwitterApp.getRestClient(context).favorite(tweet.id, new JsonHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                                Log.i("TweetsAdapter", "this should've been favorited");
+                            }
+
+                            @Override
+                            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                                Log.e("TweetsAdapter", response);
+                            }
+                        });
 
                         // change the drawable to filled heart
+                        Drawable filled_heart = context.getDrawable(R.drawable.ic_vector_heart);
+                        ibFav.setImageDrawable(filled_heart);
+                        tweet.isFavorited = true;
 
                         // increment the text inside tvFavCount
-                    // else if already favorited
+                        tweet.favCount++;
+
+                    } else {
                         // tell Twitter I want to unfavorite this
+                        TwitterApp.getRestClient(context).unfavorite(tweet.id, new JsonHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int statusCode, Headers headers, JSON json) {
+                                Log.i("TweetsAdapter", "this should've been unfavorited");
+                            }
+
+                            @Override
+                            public void onFailure(int statusCode, Headers headers, String response, Throwable throwable) {
+                                Log.e("TweetsAdapter", response);
+                            }
+                        });
 
                         // change drawable to empty heart
+                        Drawable empty_heart = context.getDrawable(R.drawable.ic_vector_heart_stroke);
+                        ibFav.setImageDrawable(empty_heart);
+                        tweet.isFavorited = false;
 
                         // decrement text inside tvFavCount
+                        tweet.favCount--;
 
+                    }
+                    tvFavCount.setText(String.valueOf(tweet.favCount));
                 }
             });
         }
