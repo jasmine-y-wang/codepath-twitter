@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:paddingBottom="20dp"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="ivProfileImage,ivTweetImage,tvBody"
+        app:constraint_referenced_ids="ivProfileImage,ivTweetImage,tvBody,btnReply,btnRetweet,btnLike"
         tools:layout_editor_absoluteY="240dp" />
 
     <ImageView
@@ -52,7 +52,6 @@
         android:layout_height="200dp"
         android:padding="10dp"
         android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/divider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/ivProfileImage"
@@ -76,6 +75,36 @@
         app:layout_constraintStart_toEndOf="@+id/ivProfileImage"
         app:layout_constraintTop_toTopOf="@+id/tvScreenName"
         tools:text="jasmine" />
+
+    <ImageButton
+        android:id="@+id/btnReply"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginStart="88dp"
+        android:background="@null"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivTweetImage"
+        app:srcCompat="@drawable/ic_reply_stroke" />
+
+    <ImageButton
+        android:id="@+id/btnLike"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginEnd="20dp"
+        android:background="@null"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivTweetImage"
+        app:srcCompat="@drawable/ic_vector_heart_stroke" />
+
+    <ImageButton
+        android:id="@+id/btnRetweet"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:background="@null"
+        app:layout_constraintEnd_toStartOf="@+id/btnLike"
+        app:layout_constraintStart_toEndOf="@+id/btnReply"
+        app:layout_constraintTop_toBottomOf="@+id/ivTweetImage"
+        app:srcCompat="@drawable/ic_vector_retweet_stroke" />
 
     <View
         android:id="@+id/divider"
