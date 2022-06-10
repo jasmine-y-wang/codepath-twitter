@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -79,6 +80,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         ImageView ivTweetImage;
         TextView tvRelativeDate;
         TextView tvName;
+        TextView tvFavCount;
+        ImageButton ibFav;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -88,6 +91,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvScreenName = itemView.findViewById(R.id.tvScreenName);
             ivTweetImage = itemView.findViewById(R.id.ivTweetImage);
             tvRelativeDate = itemView.findViewById(R.id.tvRelativeDate);
+            ibFav = itemView.findViewById(R.id.ibFav);
+            tvFavCount = itemView.findViewById(R.id.tvFavCount);
         }
 
         public void bind(Tweet tweet) {
@@ -112,6 +117,25 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
             // set relative date
             tvRelativeDate.setText(" \u2022 " + getRelativeTimeAgo(tweet.dateCreated));
+
+            ibFav.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // if not already favorited
+                        // tell Twitter I want to favorite this
+
+                        // change the drawable to filled heart
+
+                        // increment the text inside tvFavCount
+                    // else if already favorited
+                        // tell Twitter I want to unfavorite this
+
+                        // change drawable to empty heart
+
+                        // decrement text inside tvFavCount
+
+                }
+            });
         }
 
     }
